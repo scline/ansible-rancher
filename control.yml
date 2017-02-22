@@ -1,0 +1,15 @@
+---
+# This playbook deploys Rancher control node
+
+- name: apply common configuration to all nodes
+  hosts: all
+  remote_user: root
+  roles:
+    - common
+    - docker
+
+- name: rancher server node(s)
+  hosts: rancher-master
+  remote_user: root
+  roles:
+    - rancher-master

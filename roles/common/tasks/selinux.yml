@@ -1,0 +1,15 @@
+---
+# selinux settings, generally disabled.
+
+- name: installing/updating libselinux python module via "yum install"                            # Start installing basiic dependancies 
+  yum: name={{ item }} state=present                                                              # Install below services via built in YUM repo 
+  with_items:                                                                                     # List of items to install via "YUM install X Y Z"
+   - libselinux-python  
+
+- name: disabling selinux (live w/o rebooting required)
+  command: /usr/sbin/setenforce 0                                                                 # Disable SElinix on live machine, not persistant
+  ignore_errors: yes                                                                              # Errors and stops Ansible if its already disabled, this ignores the error
+
+- name: disable selinux in configuration file for persistance (policy=targeted state=disabled)
+  selinux: policy=targeted state=disabled                                                         # Persistantly disable selinux (will not come back after reboot)
+  ignore_errors: yes

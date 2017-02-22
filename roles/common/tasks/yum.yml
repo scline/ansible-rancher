@@ -1,0 +1,23 @@
+---
+# Set yum to auto update security packages
+
+- name: installing/updating yum-cron services via "yum install"                                   # Start installing basiic dependancies 
+  yum: name={{ item }} state=present                                                              # Install below services via built in YUM repo 
+  with_items:                                                                                     # List of items to install via "YUM install X Y Z"
+   - cronie
+   - yum-cron
+
+- name: copy yum-cron.conf
+  template: src=yum-cron.conf.j2 dest=/etc/yum/yum-cron.conf
+  notify: restart yum-cron service
+
+- name: enable cron(ie) service 
+  service: name=crond state=running enabled=yes
+
+- name: enable yum-cron service 
+  service: name=yum-cron state=running enabled=yes
+
+- name: upgrade all packages
+  yum:
+    name: '*'
+    state: latest

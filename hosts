@@ -1,0 +1,12 @@
+[all]
+
+[rancher-master]
+172.28.1.101
+
+[rancher-agent-prod]
+172.28.1.102
+172.28.1.103
+
+[rancher-agent-dev]
+172.28.1.106
+172.28.1.107

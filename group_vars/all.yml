@@ -1,0 +1,27 @@
+---
+# Variables listed here are applicable to all host groups
+
+### Common Role ###
+
+# Server Timezone
+server_timezone: America/Los_Angeles
+
+# Read-Only SNMPv2 Community
+snmp_ro_community: public
+
+# NTP server list
+ntpserver: ["0.us.pool.ntp.org","1.us.pool.ntp.org","2.us.pool.ntp.org","3.us.pool.ntp.org"]
+
+#### Docker Role ###
+# Docker version to install on hosts
+docker_version: "1.12.6"
+
+### Rancher Compute ###
+# Production
+rancher_node_prod_command: "docker run -d --privileged -v /var/run/docker.sock:/var/run/docker.sock -v /var/lib/rancher:/var/lib/rancher rancher/agent:v1.2.0 http://172.28.1.101:8080/v1/scripts/4C4E4C34311A408DF904:1483142400000:rm04cMJX1nLR35alXHgXqJBdQ8"
+
+# Development
+rancher_node_dev_command: "docker run -d --privileged -v /var/run/docker.sock:/var/run/docker.sock -v /var/lib/rancher:/var/lib/rancher rancher/agent:v1.2.0 http://172.28.1.101:8080/v1/scripts/370E18D688FBF429BFDC:1483142400000:Vhz1ThPdCqaoG2CRYnBrfxdxI"
+
+# ref: https://github.com/docker-library/elasticsearch/issues/111
+max_map_count: 262144

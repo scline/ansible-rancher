@@ -1,0 +1,24 @@
+---
+# Common playbook for all centos7 servers
+
+- name: update remote authorized SSH keys for future ansible runs
+  authorized_key: user={{ ansible_user_id }} key="{{ lookup('file', '~/.ssh/id_rsa.pub') }}"      # Install local SSH public key to remote system, next runs wont need -k
+  ignore_errors: yes
+
+- include: ntp.yml
+
+- include: snmp.yml
+
+- include: selinux.yml
+
+- include: yum.yml
+
+- name: verify if host is on vmware
+  shell: dmidecode | grep -i vmware | wc -l                                                       # Will be > 0 if its on a VMware hypervisor
+  register: vmware_check 
+
+- include: vmtools.yml
+  when: vmware_check > 1                                                                          # Use play if vmware is present
+
+- name: disable firewalld
+  service: name=firewalld enabled=no state=stopped

@@ -1,0 +1,15 @@
+---
+# SNMP install and settings
+
+- name: installing/updating snmp service via "yum install"                                        # Start installing basiic dependancies 
+  yum: name={{ item }} state=present                                                              # Install below services via built in YUM repo 
+  with_items:                                                                                     # List of items to install via "YUM install X Y Z"
+   - net-snmp
+   - net-snmp-utils  
+
+- name: configure snmp settings file
+  template: src=snmpd.conf.j2 dest=/etc/snmp/snmpd.conf                                           # Update the /etc/snmp/snmpd.conf file from template
+  notify: restart snmp service                                                                    # Restart SNMP process if template changed (this is done after full playbook has ran)
+
+- name: start the snmp service and forcing to start on reboot
+  service: name=snmpd state=started enabled=yes                                                   # Restart SNMP service and make sure it autostarts on system bootup

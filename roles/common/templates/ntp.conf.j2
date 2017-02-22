@@ -1,0 +1,17 @@
+driftfile /var/lib/ntp/drift
+
+restrict 127.0.0.1 
+restrict ::1
+
+{% for item in ntpserver %}
+server {{ item }}
+{% endfor %}
+
+includefile /etc/ntp/crypto/pw
+keys /etc/ntp/keys
+
+# Disable the monitoring facility to prevent amplification attacks using ntpdc
+# monlist command when default restrict does not include the noquery flag. See
+# CVE-2013-5211 for more details.
+# Note: Monitoring will not be disabled with the limited restriction flag.
+disable monitor

@@ -1,0 +1,21 @@
+---
+# This playbook deploys agent nodes for Rancher.  
+
+- name: apply common configuration to all nodes
+  hosts: all
+  remote_user: root
+  roles:
+    - common
+    - docker
+
+- name: rancher agent production node(s)
+  hosts: rancher-agent-prod
+  remote_user: root
+  roles:
+    - rancher-agent-prod
+
+- name: rancher agent development node(s)
+  hosts: rancher-agent-dev
+  remote_user: root
+  roles:
+    - rancher-agent-dev

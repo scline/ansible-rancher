@@ -1,0 +1,29 @@
+---
+# Playbook to install and configure docker on Centos
+
+- name: Add docker repositories
+  yum_repository:
+    name: docker-main
+    description: Docker Repo
+    file: docker
+    baseurl: https://yum.dockerproject.org/repo/main/centos/7/
+    gpgkey: https://yum.dockerproject.org/gpg
+    gpgcheck: 1
+
+- name: installing/updating docker service via "yum install"                                      # Start installing basiic dependancies 
+  yum: name={{ item }} state=present                                                              # Install below services via built in YUM repo 
+  with_items:                                                                                     # List of items to install via "YUM install X Y Z"
+   - docker-engine-{{ docker_version }}
+
+- name: start the docker service and forcing to start on reboot
+  service: name=docker state=started enabled=yes
+
+- name: checking current vm.max_map_count settings
+  shell: /sbin/sysctl vm.max_map_count | cut -d " " -f 3                                          # Pull current contrack max settings from live system 
+  register: server_max_map_count
+
+-  debug: 
+     msg: "{{ ansible_hostname }} has vm.max_map_count set to {{ server_max_map_count.stdout }}, target is {{ max_map_count }}"
+
+- include: max_map_count.yml 
+  when: server_max_map_count.stdout|int != {{ max_map_count }}

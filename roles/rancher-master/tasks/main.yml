@@ -1,0 +1,10 @@
+---
+# Install Rancher server
+
+- name: checking if rancher/server exsists on server
+  shell: docker ps | grep rancher/server | wc -l                                         # Pull current contrack max settings from live system 
+  register: server_exsist
+
+- name: install docker container of rancher-server
+  shell: docker run -d --restart=unless-stopped -p 8080:8080 --name "rancher-master" rancher/server 
+  when: server_exsist.stdout|int == 0

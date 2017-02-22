@@ -1,0 +1,15 @@
+---
+# Install vmware tools if host is controlled by VMWare
+
+- name: installing/updating yum-cron services via "yum install"                                   # Start installing basiic dependancies 
+  yum: name={{ item }} state=present                                                              # Install below services via built in YUM repo 
+  with_items:                                                                                     # List of items to install via "YUM install X Y Z"
+   - epel-release
+
+- name: installing/updating vmware tools yum repo module via "yum install"                        # Start installing basiic dependancies 
+  yum: name={{ item }} state=present                                                              # Install below services via built in YUM repo 
+  with_items:                                                                                     # List of items to install via "YUM install X Y Z"
+   - open-vm-tools
+
+- name: start the vmtoolsd service and forcing to start on reboot
+  service: name=vmtoolsd state=started enabled=yes                                                   # Restart SNMP service and make sure it autostarts on system bootup

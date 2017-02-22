@@ -1,0 +1,12 @@
+---
+# Handler to handle common notifications. Handlers are called by other plays.
+# See http://docs.ansible.com/playbooks_intro.html for more information about handlers.
+
+- name: restart snmp service
+  service: name=snmpd state=restarted enabled=yes 
+
+- name: restart crond service
+  service: name=crond state=restarted enabled=yes
+
+- name: restart yum-cron service
+  service: name=yum-cron state=restarted enabled=yes

@@ -1,0 +1,28 @@
+---
+# Playbook to install and configure NTP service.
+
+- name: installing/updating ntp service via "yum install"                                         # Start installing basiic dependancies 
+  yum: name={{ item }} state=present                                                              # Install below services via built in YUM repo 
+  with_items:                                                                                     # List of items to install via "YUM install X Y Z"
+   - ntp  
+
+- name: check server timezone settings and remove files as-needed
+  when: ansible_date_time.tz != "{{ server_timezone }}"                                           # Skip if already correct timezone
+  file: path=/etc/localtime state=absent                                                          # Remove /etc/timezone file if timezone is incorrect
+
+- name: updating server timezone settings (not persistant)
+  when: ansible_date_time.tz != "{{ server_timezone }}"                                           # Skip if already correct timezone
+  shell: cp /usr/share/zoneinfo/{{ server_timezone }} /etc/localtime                              # Update the /etc/timezone file if timezone is incorrect, this is NOT persistant
+
+- name: configure the ntp settings file /etc/ntp.conf and restarting ntpd service
+  template: src=ntp.conf.j2 dest=/etc/ntp.conf                                                    # Copy already built ntp configuration template
+
+- name: stopping NTP in order to force an update
+  service: name=ntpd state=stopped                                                                # Stop the NTP service so we can perform a ntpdate forced update
+
+- name: performing NTP sync with primary ntp server
+  shell: ntpdate {{ ntpserver[0] }}                                                               # Perform ntpdate with the first listed ntpserver listed under group_vars file
+  ignore_errors: yes                                                                              # Errors and stops Ansible if unable to update ntp, ignore since this isnt mission critical
+
+- name: starting NTP service and forcing to start on reboot
+  service: name=ntpd state=started enabled=yes

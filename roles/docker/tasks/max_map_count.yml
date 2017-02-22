@@ -1,0 +1,11 @@
+---
+
+- name: update /etc/sysctl.d/vm.max_map_count.conf
+  template:
+    src: vm.max_map_count.conf.j2
+    dest: /etc/sysctl.d/vm.max_map_count.conf
+
+- name: updating live vm.max_map_count (no reboot required)
+  shell: /sbin/sysctl -w vm.max_map_count={{ max_map_count }}
+  when: 																							 # Only run if server settings dont match variable definition
+    - server_max_map_count.stdout|int != {{ max_map_count }}
